@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Info, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -72,7 +73,7 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
     // Días vacíos al inicio
     for (let i = 0; i < firstDay; i++) {
       days.push(
-        <div key={`empty-${i}`} className="h-24 border border-gray-100"></div>
+        <div key={`empty-${i}`} className="h-24 border border-white/10 liquid-glass"></div>
       );
     }
 
@@ -87,36 +88,36 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
           <Tooltip>
             <TooltipTrigger asChild>
               <div
-                className={`h-24 border border-gray-100 p-2 relative cursor-pointer transition-all hover:bg-gray-50 ${
-                  isToday ? 'ring-2 ring-blue-500' : ''
+                className={`h-24 border border-white/10 p-2 relative cursor-pointer transition-all hover:bg-white/10 liquid-glass ${
+                  isToday ? 'ring-2 ring-primary shadow-lg' : ''
                 }`}
                 style={{
                   backgroundColor: subject ? `${subject.color}20` : 'transparent'
                 }}
               >
-                <div className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-gray-700'}`}>
+                <div className={`text-sm font-medium ${isToday ? 'text-primary' : 'text-foreground'}`}>
                   {day}
                 </div>
                 {subject && (
                   <div
-                    className="absolute bottom-1 left-1 right-1 text-xs p-1 rounded text-white font-medium truncate"
+                    className="absolute bottom-1 left-1 right-1 text-xs p-1 rounded text-white font-medium truncate shadow-md"
                     style={{ backgroundColor: subject.color }}
                   >
                     {subject.name}
                   </div>
                 )}
                 {isToday && (
-                  <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full shadow-md"></div>
                 )}
               </div>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="liquid-glass">
               <div className="text-center">
                 <p className="font-medium">{date.toLocaleDateString('es-ES')}</p>
                 {subject && (
                   <div className="mt-1">
                     <p className="text-sm">{subject.name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {subject.startDate.toLocaleDateString('es-ES')} - {subject.endDate.toLocaleDateString('es-ES')}
                     </p>
                   </div>
@@ -136,10 +137,10 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
       {/* Header del calendario */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
           </h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Planificación académica personalizada
           </p>
         </div>
@@ -148,7 +149,7 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('prev')}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 liquid-glass-button"
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
@@ -156,7 +157,7 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
             variant="outline"
             size="sm"
             onClick={() => setCurrentMonth(new Date())}
-            className="text-xs"
+            className="text-xs liquid-glass-button"
           >
             Hoy
           </Button>
@@ -164,7 +165,7 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
             variant="outline"
             size="sm"
             onClick={() => navigateMonth('next')}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 liquid-glass-button"
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -173,17 +174,17 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
 
       {/* Leyenda de materias */}
       {subjectDates.length > 0 && (
-        <Card className="p-4 bg-gray-50/50">
+        <Card className="liquid-glass-card p-4">
           <div className="flex items-center space-x-2 mb-3">
-            <Info className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Materias programadas</span>
+            <Info className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-foreground">Materias programadas</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {subjectDates.map((subject, index) => (
               <Badge
                 key={index}
                 variant="secondary"
-                className="text-white border-0"
+                className="text-white border-0 shadow-md"
                 style={{ backgroundColor: subject.color }}
               >
                 {subject.name} ({subject.duration} días)
@@ -194,11 +195,11 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
       )}
 
       {/* Grid del calendario */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="liquid-glass rounded-lg border border-white/20 overflow-hidden">
         {/* Días de la semana */}
-        <div className="grid grid-cols-7 bg-gray-50">
+        <div className="grid grid-cols-7 bg-primary/5">
           {dayNames.map((day) => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-gray-700 border-r border-gray-200 last:border-r-0">
+            <div key={day} className="p-3 text-center text-sm font-medium text-primary border-r border-white/10 last:border-r-0">
               {day}
             </div>
           ))}
@@ -211,9 +212,9 @@ export const CalendarView = ({ subjectDates, startDate }: CalendarViewProps) => 
       </div>
 
       {subjectDates.length === 0 && (
-        <Card className="p-8 text-center bg-gray-50/50">
-          <div className="text-gray-500">
-            <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+        <Card className="liquid-glass-card p-8 text-center">
+          <div className="text-muted-foreground">
+            <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
             <h3 className="text-lg font-medium mb-2">No hay materias programadas</h3>
             <p className="text-sm">
               Selecciona un curso en el panel de configuración para ver tu calendario académico.
