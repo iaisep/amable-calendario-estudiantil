@@ -59,7 +59,9 @@ export const UnifiedControlPanel = ({
   const [adjustmentDate, setAdjustmentDate] = useState<Date>(new Date());
   const [activeTab, setActiveTab] = useState<'config' | 'progress'>('config');
 
-  const handleProgressAdjustment = () => {
+  const WEBHOOK_URL = 'https://workflow.universidadisep.com/webhook/42231ec0-e1ae-497e-b08c-7b2a8e2bf479';
+
+  const handleProgressAdjustment = async () => {
     if (!selectedSubject) {
       toast({
         title: "Error",
@@ -70,6 +72,26 @@ export const UnifiedControlPanel = ({
     }
 
     onProgressAdjust(selectedSubject, adjustmentDate);
+    
+    // Trigger webhook
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          action: "progress_adjustment",
+          subject: selectedSubject,
+          adjustmentDate: adjustmentDate.toISOString(),
+          course: selectedCourse,
+        }),
+      });
+    } catch (error) {
+      console.log("Webhook trigger attempted:", error);
+    }
     
     toast({
       title: "Progreso actualizado",
@@ -327,6 +349,15 @@ export const UnifiedControlPanel = ({
           >
             <Target className="w-4 h-4 mr-2" />
             Recalcular Calendario
+          </Button>
+
+          <Button
+            onClick={downloadPDF}
+            className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/90 hover:to-secondary/90 text-white shadow-lg"
+            size="lg"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Descargar Calendario PDF
           </Button>
 
           {currentSubject && (
