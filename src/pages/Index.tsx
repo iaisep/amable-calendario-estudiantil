@@ -50,6 +50,8 @@ const Index = () => {
   const calculateSubjectDates = () => {
     const subjectDates = [];
     let currentDate = new Date(startDate);
+    // Ensure we start exactly on the selected start date
+    currentDate.setHours(0, 0, 0, 0);
     
     for (const subject of subjects) {
       const endDate = new Date(currentDate);
@@ -61,7 +63,9 @@ const Index = () => {
         endDate: new Date(endDate)
       });
       
-      currentDate.setDate(endDate.getDate() + 1);
+      // Move to the next day after the current subject ends
+      currentDate = new Date(endDate);
+      currentDate.setDate(currentDate.getDate() + 1);
     }
     
     return subjectDates;
@@ -70,7 +74,15 @@ const Index = () => {
   const handleProgressAdjustment = (subjectName: string, newStartDate: Date) => {
     const subjectIndex = subjects.findIndex(s => s.name === subjectName);
     if (subjectIndex !== -1) {
-      setStartDate(newStartDate);
+      // Calculate the new start date based on when this subject should begin
+      const previousSubjects = subjects.slice(0, subjectIndex);
+      const totalDaysBeforeSubject = previousSubjects.reduce((total, subject) => total + subject.duration, 0);
+      
+      // Calculate the new course start date
+      const newCourseStartDate = new Date(newStartDate);
+      newCourseStartDate.setDate(newStartDate.getDate() - totalDaysBeforeSubject);
+      
+      setStartDate(newCourseStartDate);
       setCurrentSubject(subjectName);
     }
   };

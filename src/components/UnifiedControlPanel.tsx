@@ -89,11 +89,32 @@ export const UnifiedControlPanel = ({
         return;
       }
 
-      const canvas = await html2canvas(calendarElement, {
-        scale: 2,
+      // Create a temporary container to capture the full calendar
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.top = '-9999px';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.width = '1200px';
+      tempContainer.style.backgroundColor = 'white';
+      tempContainer.style.padding = '20px';
+      document.body.appendChild(tempContainer);
+
+      // Clone the calendar content
+      const calendarClone = calendarElement.cloneNode(true) as HTMLElement;
+      tempContainer.appendChild(calendarClone);
+
+      // Generate canvas from the temporary container
+      const canvas = await html2canvas(tempContainer, {
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 1240,
+        height: tempContainer.scrollHeight + 40,
       });
+
+      // Remove temporary container
+      document.body.removeChild(tempContainer);
 
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('l', 'mm', 'a4');
@@ -102,7 +123,7 @@ export const UnifiedControlPanel = ({
       const pdfHeight = pdf.internal.pageSize.getHeight();
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const ratio = Math.min((pdfWidth - 20) / imgWidth, (pdfHeight - 40) / imgHeight);
       const imgX = (pdfWidth - imgWidth * ratio) / 2;
       const imgY = 30;
 
@@ -118,7 +139,7 @@ export const UnifiedControlPanel = ({
       
       toast({
         title: "PDF generado",
-        description: "Tu calendario ha sido descargado exitosamente",
+        description: "Tu calendario completo ha sido descargado exitosamente",
       });
     } catch (error) {
       toast({
@@ -159,15 +180,6 @@ export const UnifiedControlPanel = ({
             Progreso
           </button>
         </div>
-        
-        <Button
-          onClick={downloadPDF}
-          className="liquid-glass-button bg-accent/20 hover:bg-accent/30 text-accent-foreground"
-          size="sm"
-        >
-          <Download className="w-4 h-4 mr-2" />
-          Descargar PDF
-        </Button>
       </div>
 
       {/* Configuration Tab */}
@@ -191,9 +203,34 @@ export const UnifiedControlPanel = ({
             </Select>
           </div>
 
+          {selectedCourse && (
+            <>
+              <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
+                <div className="text-sm">
+                  <p className="font-medium text-primary mb-1">Curso Seleccionado:</p>
+                  <p className="text-primary/80">
+                    {courses.find(c => c.id === selectedCourse)?.name}
+                  </p>
+                  <p className="text-xs text-primary/60 mt-2">
+                    Inicio: {format(startDate, "PPP", { locale: es })}
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                onClick={downloadPDF}
+                className="w-full bg-gradient-to-r from-secondary to-primary hover:from-secondary/90 hover:to-primary/90 text-white shadow-lg"
+                size="lg"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Descargar Calendario PDF
+              </Button>
+            </>
+          )}
+
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              Fecha de Inicio
+              Fecha de Inicio del Curso
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -222,20 +259,6 @@ export const UnifiedControlPanel = ({
               </PopoverContent>
             </Popover>
           </div>
-
-          {selectedCourse && (
-            <div className="p-4 bg-primary/10 rounded-lg border border-primary/20">
-              <div className="text-sm">
-                <p className="font-medium text-primary mb-1">Curso Seleccionado:</p>
-                <p className="text-primary/80">
-                  {courses.find(c => c.id === selectedCourse)?.name}
-                </p>
-                <p className="text-xs text-primary/60 mt-2">
-                  Inicio: {format(startDate, "PPP", { locale: es })}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
