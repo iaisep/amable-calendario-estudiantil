@@ -4,48 +4,27 @@ import { CalendarView } from '@/components/CalendarView';
 import { UnifiedControlPanel } from '@/components/UnifiedControlPanel';
 import { MotivationalQuote } from '@/components/MotivationalQuote';
 import { Card } from '@/components/ui/card';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Loader2 } from 'lucide-react';
+import { useCalendarData } from '@/hooks/useCalendarData';
 
 const Index = () => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [selectedCourse, setSelectedCourse] = useState<string>('');
   const [currentSubject, setCurrentSubject] = useState<string>('');
-  const [subjects, setSubjects] = useState<any[]>([]);
-
-  // Datos de ejemplo (en producción vendrían de NocoDB via n8n)
-  const sampleCourses = [
-    { id: 'prog-2024', name: 'Curso de Programación 2024' },
-    { id: 'design-2024', name: 'Diseño Web 2024' },
-    { id: 'data-2024', name: 'Ciencia de Datos 2024' }
-  ];
-
-  const sampleSubjects = {
-    'prog-2024': [
-      { name: 'Python Básico', duration: 14, color: '#7848FF' },
-      { name: 'JavaScript Fundamentals', duration: 14, color: '#FF7F1D' },
-      { name: 'React Development', duration: 21, color: '#1B156B' },
-      { name: 'Node.js Backend', duration: 14, color: '#007BFF' },
-      { name: 'Proyecto Final', duration: 14, color: '#78DC6E' }
-    ],
-    'design-2024': [
-      { name: 'Principios de Diseño', duration: 10, color: '#7848FF' },
-      { name: 'Adobe Photoshop', duration: 12, color: '#FF7F1D' },
-      { name: 'Figma Avanzado', duration: 8, color: '#1B156B' },
-      { name: 'UX/UI Design', duration: 15, color: '#007BFF' }
-    ],
-    'data-2024': [
-      { name: 'Estadística', duration: 18, color: '#7848FF' },
-      { name: 'Python para Datos', duration: 16, color: '#FF7F1D' },
-      { name: 'Machine Learning', duration: 20, color: '#1B156B' },
-      { name: 'Visualización de Datos', duration: 12, color: '#78DC6E' }
-    ]
-  };
+  
+  const { 
+    courses, 
+    subjects, 
+    isLoading, 
+    fetchSubjects, 
+    getRandomQuote 
+  } = useCalendarData();
 
   useEffect(() => {
     if (selectedCourse) {
-      setSubjects(sampleSubjects[selectedCourse as keyof typeof sampleSubjects] || []);
+      fetchSubjects(selectedCourse);
     }
-  }, [selectedCourse]);
+  }, [selectedCourse, fetchSubjects]);
 
   const calculateSubjectDates = () => {
     const subjectDates = [];
@@ -123,7 +102,7 @@ const Index = () => {
           <div className="lg:col-span-1 space-y-6">
             {/* Unified Control Panel */}
             <UnifiedControlPanel
-              courses={sampleCourses}
+              courses={courses}
               selectedCourse={selectedCourse}
               onCourseChange={setSelectedCourse}
               startDate={startDate}
@@ -135,17 +114,24 @@ const Index = () => {
 
             {/* Frase Motivacional */}
             <Card className="liquid-glass-card p-6 bg-gradient-to-br from-accent/10 to-secondary/10">
-              <MotivationalQuote />
+              <MotivationalQuote getRandomQuote={getRandomQuote} />
             </Card>
           </div>
 
           {/* Calendario Principal */}
           <div className="lg:col-span-3">
             <div id="calendar-container" className="liquid-glass-card p-6">
-              <CalendarView
-                subjectDates={calculateSubjectDates()}
-                startDate={startDate}
-              />
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <span className="ml-2 text-muted-foreground">Cargando calendario...</span>
+                </div>
+              ) : (
+                <CalendarView
+                  subjectDates={calculateSubjectDates()}
+                  startDate={startDate}
+                />
+              )}
             </div>
           </div>
         </div>
