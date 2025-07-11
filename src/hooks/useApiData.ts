@@ -34,7 +34,7 @@ interface N8NQuote {
   author: string;
 }
 
-const BASE_URL = 'https://n8ntotal.universidadisep.com/webhook';
+const BASE_URL = 'https://workflow.universidadisep.com/webhook';
 
 export const useApiData = () => {
   const [courses, setCourses] = useState<Course[]>([]);
