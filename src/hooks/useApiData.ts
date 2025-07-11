@@ -25,7 +25,7 @@ interface N8NCourse {
 
 interface N8NSubject {
   name: string;
-  duration_days: number;
+  duration_days: string;
   color: string;
 }
 
@@ -100,7 +100,7 @@ export const useApiData = () => {
       const data: N8NSubject[] = await response.json();
       const transformedSubjects = data.map(subject => ({
         name: subject.name,
-        duration: subject.duration_days,
+        duration: parseInt(subject.duration_days, 10),
         color: subject.color
       }));
       
