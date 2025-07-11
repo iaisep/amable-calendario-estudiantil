@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -49,8 +49,8 @@ export const useCalendarData = () => {
     }
   };
 
-  // Fetch subjects for a specific course
-  const fetchSubjects = async (courseId: string) => {
+  // Fetch subjects for a specific course (memoized to prevent infinite loops)
+  const fetchSubjects = useCallback(async (courseId: string) => {
     if (!courseId) {
       setSubjects([]);
       return;
@@ -74,7 +74,7 @@ export const useCalendarData = () => {
         variant: "destructive",
       });
     }
-  };
+  }, []); // Empty dependency array since it only depends on supabase client
 
   // Fetch motivational quotes
   const fetchMotivationalQuotes = async () => {
