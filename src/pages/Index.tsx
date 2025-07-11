@@ -109,7 +109,7 @@ const Index = () => {
 
             {/* Frase Motivacional */}
             <Card className="liquid-glass-card p-6 bg-gradient-to-br from-accent/10 to-secondary/10">
-              <MotivationalQuote />
+              <MotivationalQuote key={selectedCourse} />
             </Card>
           </div>
 
