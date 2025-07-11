@@ -67,6 +67,7 @@ export const useCalendarData = () => {
       setSubjects(data || []);
     } catch (error) {
       console.error('Error fetching subjects:', error);
+      setSubjects([]); // Set empty array on error
       toast({
         title: "Error",
         description: "No se pudieron cargar las materias",
