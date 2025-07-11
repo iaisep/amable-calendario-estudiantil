@@ -1,83 +1,17 @@
 
-import { useState, useEffect } from 'react';
 import { Quote, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-const motivationalQuotes = [
-  {
-    text: "¡Hoy es un gran día para aprender!",
-    author: "Anónimo"
-  },
-  {
-    text: "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
-    author: "Robert Collier"
-  },
-  {
-    text: "No te rindas, cada experto fue una vez un principiante.",
-    author: "Helen Hayes"
-  },
-  {
-    text: "La educación es el arma más poderosa que puedes usar para cambiar el mundo.",
-    author: "Nelson Mandela"
-  },
-  {
-    text: "El único modo de hacer un gran trabajo es amar lo que haces.",
-    author: "Steve Jobs"
-  },
-  {
-    text: "Tu única limitación eres tú mismo.",
-    author: "Anónimo"
-  },
-  {
-    text: "El conocimiento no es poder hasta que se aplica.",
-    author: "Dale Carnegie"
-  },
-  {
-    text: "Cada día es una nueva oportunidad para crecer.",
-    author: "Anónimo"
-  },
-  {
-    text: "La perseverancia es la clave del éxito.",
-    author: "Benjamin Franklin"
-  },
-  {
-    text: "Aprende como si fueras a vivir para siempre.",
-    author: "Mahatma Gandhi"
-  },
-  {
-    text: "El futuro pertenece a quienes creen en la belleza de sus sueños.",
-    author: "Eleanor Roosevelt"
-  },
-  {
-    text: "No esperes el momento perfecto, toma el momento y hazlo perfecto.",
-    author: "Anónimo"
-  },
-  {
-    text: "La disciplina es elegir entre lo que quieres ahora y lo que quieres más.",
-    author: "Abraham Lincoln"
-  },
-  {
-    text: "Cada logro empieza con la decisión de intentarlo.",
-    author: "Anónimo"
-  },
-  {
-    text: "Tu potencial es infinito cuando crees en ti mismo.",
-    author: "Anónimo"
-  }
-];
+import { useApiData } from '@/hooks/useApiData';
 
 export const MotivationalQuote = () => {
-  const [currentQuote, setCurrentQuote] = useState(motivationalQuotes[0]);
+  const { quote, fetchQuote, loading } = useApiData();
 
-  const getRandomQuote = () => {
-    const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
-    setCurrentQuote(motivationalQuotes[randomIndex]);
+  const defaultQuote = {
+    text: "El futuro pertenece a aquellos que creen en la belleza de sus sueños.",
+    author: "Eleanor Roosevelt"
   };
 
-  useEffect(() => {
-    // Seleccionar una frase aleatoria al cargar el componente
-    getRandomQuote();
-  }, []);
+  const currentQuote = quote || defaultQuote;
 
   return (
     <div className="space-y-4">
@@ -89,10 +23,11 @@ export const MotivationalQuote = () => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={getRandomQuote}
+          onClick={fetchQuote}
+          disabled={loading.quote}
           className="h-8 w-8 p-0 text-orange-600 hover:text-orange-800 hover:bg-orange-100"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className={`w-4 h-4 ${loading.quote ? 'animate-spin' : ''}`} />
         </Button>
       </div>
       

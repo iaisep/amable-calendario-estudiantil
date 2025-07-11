@@ -43,6 +43,7 @@ interface UnifiedControlPanelProps {
   subjects: Subject[];
   currentSubject: string;
   onProgressAdjust: (subjectName: string, newStartDate: Date) => void;
+  loading?: boolean;
 }
 
 export const UnifiedControlPanel = ({
@@ -53,7 +54,8 @@ export const UnifiedControlPanel = ({
   onStartDateChange,
   subjects,
   currentSubject,
-  onProgressAdjust
+  onProgressAdjust,
+  loading = false
 }: UnifiedControlPanelProps) => {
   const [selectedSubject, setSelectedSubject] = useState('');
   const [adjustmentDate, setAdjustmentDate] = useState<Date>(new Date());
@@ -213,7 +215,7 @@ export const UnifiedControlPanel = ({
             </Label>
             <Select value={selectedCourse} onValueChange={onCourseChange}>
               <SelectTrigger className="w-full liquid-glass">
-                <SelectValue placeholder="Elige tu curso..." />
+                <SelectValue placeholder={courses.length === 0 ? "Cargando cursos..." : "Elige tu curso..."} />
               </SelectTrigger>
               <SelectContent>
                 {courses.map((course) => (
@@ -291,9 +293,9 @@ export const UnifiedControlPanel = ({
             <Label className="text-sm font-medium">
               ¿Qué materia estás cursando hoy?
             </Label>
-            <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+            <Select value={selectedSubject} onValueChange={setSelectedSubject} disabled={loading}>
               <SelectTrigger className="w-full liquid-glass">
-                <SelectValue placeholder="Selecciona materia actual..." />
+                <SelectValue placeholder={loading ? "Cargando materias..." : "Selecciona materia actual..."} />
               </SelectTrigger>
               <SelectContent>
                 {subjects.map((subject, index) => (
